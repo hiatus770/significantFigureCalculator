@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Significant Figure Calculator</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Significant Figure Calculator</h1>
+        <div class="form">
+            <label for="amount" id="sigCount" style="font-size: 25px; color : #584be6;">0</label><br>
+            <input type="text" id="sigInput" name="sigInput"><br>
+        </div>
+    </div>
+    <script>
+        const input = document.getElementById('sigInput');
+        input.addEventListener('input', function () {
+            const value = input.value;
+            console.log(value); // replace with your own code
+            // Count how many non zero digits there are
+            var decimalCount = 0;
+            for (var i = 0; i < value.length; i++) {
+                if (value[i] == ".") {
+                    decimalCount++;
+                }
+            }
+
+            var nonZero = 0;
+            for (var i = 0; i < value.length; i++) {
+                if (value[i] != "0" && value[i] != ".") {
+                    nonZero++;
+                }
+            }
+
+            var zeroCount = 0;
+            for (var i = 0; i < value.length; i++) {
+                if (value[i] == "0") {
+                    zeroCount++;
+                }
+            }
+
+            var sigCount = 0;
+            if (decimalCount == 0) {
+                sigCount = nonZero;
+            } else if (decimalCount == 1) {
+                sigCount = nonZero + zeroCount;
+            } else {
+                sigCount = nonZero;
+            }
+
+            if (sigCount == 0) {
+                document.getElementById("sigCount").innerHTML = "0";
+            } else {
+                document.getElementById("sigCount").innerHTML = sigCount;
+            }
+
+            console.log(sigCount); 
+
+        });
+    </script>
+</body>
