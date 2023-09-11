@@ -12,13 +12,21 @@
         <h1>Significant Figure Calculator</h1>
         <div class="form">
             <label for="amount" id="sigCount" style="font-size: 25px; color : #584be6;">0</label><br>
-            <input type="text" id="sigInput" name="sigInput"><br>
+            <input type="text" id="sigInput" name="sigInput" style="background-color: #f3f3f3;"><br>
         </div>
     </div>
     <script>
         const input = document.getElementById('sigInput');
+
+        // Audio function player
+        function playAudio() {
+            var audio = new Audio('beep.wav');
+            audio.play();
+        }
+
+
         input.addEventListener('input', function () {
-            const value = input.value;
+            var value = input.value;
             console.log(value); // replace with your own code
 
             // If the amout of . is greater than 1, remove the last one
@@ -39,13 +47,27 @@
                     newValue += value[i];
                 }
                 input.value = newValue;
+                value = newValue;
             }
-            
+
+            // Filter out non numbers and decimals
+            var newValue = "";
+            for (var i = 0; i < value.length; i++) {
+                if (value[i] == ".") {
+                    newValue += value[i];
+                }
+                if (value[i] >= 0 && value[i] <= 9) {
+                    newValue += value[i];
+                }
+            }
+            input.value = newValue;
+            value = newValue;
+
 
             // Function to see if the remaining value is full of zeroes
             function isZeroes(index) {
-                for(var i = index; i < value.length; i++) {
-                    if(value[i] != "0") {
+                for (var i = index; i < value.length; i++) {
+                    if (value[i] != "0") {
                         return false;
                     }
                 }
@@ -95,7 +117,7 @@
                     if (!prevIsZero(i) && !isZeroes(i) && value[i] == "0") {
                         sigCount++;
                     }
-                    
+
                     if (value[i] == ".") {
                         decimalIndex = i;
                         break;
@@ -103,19 +125,28 @@
                 }
 
                 // Second decimal half, everything after the decimal is significant
-                for (var i = decimalIndex+1; i < value.length; i++) {
+                for (var i = decimalIndex + 1; i < value.length; i++) {
                     sigCount++;
                 }
             }
 
+            // check if sigCount has increased from the previous value
+            if (sigCount > document.getElementById("sigCount").innerHTML) {
+                // Play audio x amoun of times where its the differnece between the two
+                for (var i = 0; i < sigCount - document.getElementById("sigCount").innerHTML; i++) {
+                    playAudio();
+                    // Delay
+                    setTimeout(function () {}, 500);
+                }
+            }
 
             if (sigCount == 0) {
                 document.getElementById("sigCount").innerHTML = "0";
             } else {
                 document.getElementById("sigCount").innerHTML = sigCount;
             }
-
-            console.log(sigCount); 
+            console.log(value); 
+            console.log(sigCount);
 
         });
     </script>
