@@ -20,7 +20,8 @@
         input.addEventListener('input', function () {
             const value = input.value;
             console.log(value); // replace with your own code
-            // Count how many non zero digits there are
+
+            // If the amout of . is greater than 1, remove the last one
             var decimalCount = 0;
             for (var i = 0; i < value.length; i++) {
                 if (value[i] == ".") {
@@ -28,28 +29,85 @@
                 }
             }
 
-            var nonZero = 0;
-            for (var i = 0; i < value.length; i++) {
-                if (value[i] != "0" && value[i] != ".") {
-                    nonZero++;
+            // Remove the last decimal if there is more than one
+            if (decimalCount > 1) {
+                var newValue = "";
+                for (var i = 0; i < value.length; i++) {
+                    if (value[i] == "." && i == value.length - 1) {
+                        break;
+                    }
+                    newValue += value[i];
                 }
+                input.value = newValue;
+            }
+            
+
+            // Function to see if the remaining value is full of zeroes
+            function isZeroes(index) {
+                for(var i = index; i < value.length; i++) {
+                    if(value[i] != "0") {
+                        return false;
+                    }
+                }
+                return true;
             }
 
-            var zeroCount = 0;
-            for (var i = 0; i < value.length; i++) {
-                if (value[i] == "0") {
-                    zeroCount++;
+            // Checks to see if the current to the left of the index is a zero
+            function prevIsZero(index) {
+                for (var i = index; i >= 0; i--) {
+                    if (value[i] != "0") {
+                        return false;
+                    }
                 }
+                return true;
             }
 
             var sigCount = 0;
-            if (decimalCount == 0) {
-                sigCount = nonZero;
-            } else if (decimalCount == 1) {
-                sigCount = nonZero + zeroCount;
-            } else {
-                sigCount = nonZero;
+            var decimal = false;
+            var nonZero = false;
+
+            for (var i = 0; i < value.length; i++) {
+                if (value[i] == ".") {
+                    decimal = true;
+                }
             }
+
+            if (!decimal) {
+                for (var i = 0; i < value.length; i++) {
+                    // If the value is not a zero
+                    if (value[i] != "0") {
+                        sigCount++;
+                    }
+                    // If the value is a zero and the remaining value is not full of zeroes
+                    if (!prevIsZero(i) && !isZeroes(i) && value[i] == "0") {
+                        sigCount++;
+                    }
+                }
+            } else {
+                var decimalIndex = 0;
+                // First non decimal half 
+                for (var i = 0; i < value.length; i++) {
+                    // If the value is not a zero
+                    if (value[i] != "0" && value[i] != ".") {
+                        sigCount++;
+                    }
+                    // If the value is a zero and the remaining value is not full of zeroes
+                    if (!prevIsZero(i) && !isZeroes(i) && value[i] == "0") {
+                        sigCount++;
+                    }
+                    
+                    if (value[i] == ".") {
+                        decimalIndex = i;
+                        break;
+                    }
+                }
+
+                // Second decimal half, everything after the decimal is significant
+                for (var i = decimalIndex+1; i < value.length; i++) {
+                    sigCount++;
+                }
+            }
+
 
             if (sigCount == 0) {
                 document.getElementById("sigCount").innerHTML = "0";
